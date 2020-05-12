@@ -2,10 +2,9 @@
 from tkinter import *
 
 import settings
-import fun
 import screen
-import export
 import scenarios
+
 
 root = Tk()
 root.geometry("800x600")
@@ -36,6 +35,7 @@ def deleteframes ():
             widget.destroy()
 
 
+# generation of input fields and buttons on screen
 def gen_inputfields():
     settings.no_projects = screen.EnterField(framevar=frame_one, inputrow=1, inputcolumn=0, inputtext="Number of projects", basicvalue=100, type=0)
     settings.density_min = screen.EnterField(framevar=frame_one, inputrow=3, inputcolumn=0, inputtext="density_min", basicvalue=250, type=0)

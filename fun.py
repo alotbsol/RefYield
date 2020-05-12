@@ -54,11 +54,12 @@ def linear_gen(in_value, in_lower, in_upper, out_lower, out_upper):
     out_val = in_proportion/in_spread * out_spread + out_lower
     return out_val
 
+#returns x numbers inbetween - linspace
 def x_inbetween(lower, upper, size):
     x = np.linspace(start=lower, stop=upper, num=size, endpoint=True, retstep=False, dtype=None, axis=0)
     return list(x)
 
-
+#linspaced beta
 def beta_lin(lower, upper, parameteralfa, parameterbeta, size):
     generation_list = x_inbetween(0, 1, size)
     x = []
@@ -69,6 +70,7 @@ def beta_lin(lower, upper, parameteralfa, parameterbeta, size):
 
     return list(x)
 
+#linspaced gauss
 def gauss_lin(size, lowerlimit, upperlimit):
     generation_list = x_inbetween(0.01, 0.99, size)
 
@@ -81,7 +83,7 @@ def gauss_lin(size, lowerlimit, upperlimit):
 
     return list(x)
 
-
+#returns x lowest elements in a list
 def Nminelements(inputlist, N):
     winners_list = []
     copylist =list(inputlist)
@@ -97,18 +99,20 @@ def Nminelements(inputlist, N):
     lastwinner = max(winners_list)
     return lastwinner
 
-
+# converts power density to production in MWh
 def density_to_production(powerdensity, radius, efficiencyfactor, turbinecapacity):
     """ https://rechneronline.de/wind-power/ """
     x = pi/2 * (radius**2) * efficiencyfactor * powerdensity /1000000
     toMWhperMW = 24 * 365 / turbinecapacity
     return (x * toMWhperMW)
 
+# converts power density to wind speed
 def density_to_wspeed(production, radius, efficiencyfactor, turbinecapacity, airdensity):
     """ https://rechneronline.de/wind-power/ """
     windspeed = (production / (24 * 365 / turbinecapacity))/(pi/2 * (radius**2) * airdensity * efficiencyfactor /1000000)**(1/3)
     return (windspeed)
 
+# converts wind speed to production - not in use
 def wind_to_production(windspeed, radius, airdensity, efficiencyfactor, turbinecapacity):
     """ https://rechneronline.de/wind-power/ """
     x = pi/2 * (radius**2) * (windspeed ** 3) * airdensity * efficiencyfactor /1000000

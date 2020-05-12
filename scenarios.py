@@ -1,12 +1,13 @@
 import settings
 import export
 import itertools
+import gen
 
 
 def generate_once():
     exp = export.Exporter(function_name="generate_once")
 
-    settings.do_the_calc()
+    gen.do_the_calc()
 
     exp.single_round()
     exp.all_rounds_temp()
@@ -28,7 +29,7 @@ def generate_once_germ():
 
     exp = export.Exporter(function_name="generate_once_germ")
 
-    settings.do_the_calc_germ()
+    gen.do_the_calc_germ()
 
     exp.single_round()
     exp.all_rounds_temp()
@@ -44,15 +45,16 @@ def generate_xtimes():
     exp2 = export.Exporter(function_name="generate_xtimes")
 
     for i in range(0, settings.iterations.var):
-        settings.do_the_calc()
+        gen.do_the_calc()
 
 
     exp2.all_rounds_temp()
 
-    settings.store_data()
+    gen.store_data()
     exp2.all_rounds()
     exp2.by_compensation()
     exp2.end_info_log()
+
 
 def generate_xtimes_germ():
     global correction_max
@@ -71,16 +73,17 @@ def generate_xtimes_germ():
     exp2 = export.Exporter(function_name="generate_xtimes_germ")
 
     for i in range(0, settings.iterations.var):
-        settings.do_the_calc_germ()
+        gen.do_the_calc_germ()
 
 
     exp2.all_rounds_temp()
 
-    settings.store_data()
+    gen.store_data()
     exp2.all_rounds()
     exp2.by_compensation()
     exp2.howgoodis_RF()
     exp2.end_info_log()
+
 
 def generate_specific_combination_germ():
     global correction_max
@@ -152,9 +155,9 @@ def generate_specific_combination_germ():
                                 settings.pdf_parameter2.var = pdf_list[ii][1]
 
                                 for i in range(0, settings.iterations.var):
-                                    settings.do_the_calc_germ()
+                                    gen.do_the_calc_germ()
 
-                                settings.store_data()
+                                gen.store_data()
                                 settings.create_storage_temporary()
 
     exp3.all_rounds()
@@ -175,7 +178,7 @@ def generate_specific_combination():
     settings.max_possible_bid = 80
 
     global iterations
-    settings.iterations.var = 200
+    settings.iterations.var = settings.iterations.var
 
     global LCOE_min
     global LCOE_max
@@ -228,9 +231,9 @@ def generate_specific_combination():
                         settings.pdf_parameter2.var = combinations_created[ii][1]
 
                         for i in range(0, settings.iterations.var):
-                            settings.do_the_calc()
+                            gen.do_the_calc()
 
-                        settings.store_data()
+                        gen.store_data()
                         settings.create_storage_temporary()
 
     exp5.all_rounds()
@@ -238,8 +241,6 @@ def generate_specific_combination():
     exp5.howgoodis_RF()
     exp5.end_info_log()
     exp5.graph_it()
-
-
 
 
 def generate_german_auctions():
@@ -320,9 +321,9 @@ def generate_german_auctions():
                             settings.pdf_parameter2.var = pdf_list[ii][1]
 
                             for i in range(0, settings.iterations.var):
-                                settings.do_the_calc_germ()
+                                gen.do_the_calc_germ()
 
-                            settings.store_data()
+                            gen.store_data()
                             settings.create_storage_temporary()
 
 
