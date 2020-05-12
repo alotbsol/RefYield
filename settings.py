@@ -28,7 +28,6 @@ def changable_var():
     density_max = screen.EnterField
 
 
-    """tohle ted nefunguje protoze je to pocitane od LCOE base nize a prepocitavane korekcnim mechanismem podle EEG"""
     global LCOE_min
     global LCOE_max
     LCOE_min = screen.EnterField
