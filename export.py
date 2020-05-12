@@ -7,6 +7,7 @@ from datetime import date
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+#exports data into excel
 class Exporter(object):
     def __init__(self, function_name):
         self.writer = pd.ExcelWriter('Export_Project_{0}.xlsx'.format(function_name), engine='xlsxwriter')
@@ -40,7 +41,6 @@ class Exporter(object):
         self.df_storage_temp = pd.DataFrame.from_dict(settings.storage_temporary, orient='index').transpose()
         self.df_storage_temp.to_excel(self.writer, sheet_name="all_temp")
 
-
     def by_compensation(self):
         df_comp = pd.DataFrame.from_dict(settings.storage_temporary, orient='index').transpose()
 
@@ -50,7 +50,6 @@ class Exporter(object):
         for i in ["el_produced", "paid_min", "paid_max", "subsidy_min", "subsidy_max","auction_bid_min_succ", "auction_bid_max_succ", "auction_bid_max_received", "max_poss_bid"]:
             doexcelu = df_comp.pivot_table(values=i, index=["density_min", "density_max", "LCOE_min", "LCOE_max", "pdf", "pdf_parameter1", "pdf_parameter2", "supply", "demand", "dem_sup", "other_factors", "el_prices"], columns=["compensation"])
             doexcelu.to_excel(self.writer, sheet_name="by_{0}".format(i))
-
 
     def by_compensation_germany(self):
         for i in ["el_produced", "paid_min", "paid_max", "subsidy_min", "subsidy_max","auction_bid_min_succ", "auction_bid_max_succ", "auction_bid_max_received", "max_poss_bid"]:

@@ -3,7 +3,7 @@ import export
 import itertools
 import gen
 
-
+#just once general set up
 def generate_once():
     exp = export.Exporter(function_name="generate_once")
 
@@ -14,7 +14,7 @@ def generate_once():
     exp.by_compensation()
     exp.end_info_log()
 
-
+#just once german set up
 def generate_once_germ():
     global correction_max
     global correction_min
@@ -37,7 +37,7 @@ def generate_once_germ():
 
     exp.end_info_log()
 
-
+#x itterations general set up
 def generate_xtimes():
     global iterations
     settings.iterations.var = settings.iterations.var
@@ -55,7 +55,7 @@ def generate_xtimes():
     exp2.by_compensation()
     exp2.end_info_log()
 
-
+#x itterations german set up
 def generate_xtimes_germ():
     global correction_max
     global correction_min
@@ -84,7 +84,7 @@ def generate_xtimes_germ():
     exp2.howgoodis_RF()
     exp2.end_info_log()
 
-
+#specific parameters as per code below german set up
 def generate_specific_combination_germ():
     global correction_max
     global correction_min
@@ -165,7 +165,7 @@ def generate_specific_combination_germ():
     exp3.howgoodis_RF()
     exp3.end_info_log()
 
-
+#specific parameters as per code below general set up
 def generate_specific_combination():
     global correction_max
     global correction_min
@@ -242,7 +242,7 @@ def generate_specific_combination():
     exp5.end_info_log()
     exp5.graph_it()
 
-
+#simulate german wind auctions
 def generate_german_auctions():
     global correction_max
     global correction_min
