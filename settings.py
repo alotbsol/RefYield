@@ -1,9 +1,8 @@
 # this file is for variables
+import random
 from random import randint
-
 import fun
 import screen
-import random
 import pandas as pd
 
 #some important var
@@ -15,7 +14,7 @@ airdensity = 1.2
 max_possible_bid = 100
 
 #if this number is zero then it calculates with projects which are too expensive as not being built
-ifmax_thenmax = 1
+ifmax_thenmax = 0
 
 #Creates basic variables
 def changable_var():
@@ -57,10 +56,8 @@ def create_variables():
     global compensation_level
     compensation_level = 0
 
-
     global compensation_reference
     compensation_reference = 50
-
 
     global reference_ws
     reference_ws = 6.45
@@ -75,9 +72,7 @@ def create_variables():
     x_speed = fun.density_to_wspeed(production=x_prod, radius=turbine_radius, efficiencyfactor=turbine_efficiencyfactor,
                           turbinecapacity=turbinecapacity, airdensity=airdensity)
 
-
     site_qual_min = x_speed/reference_ws
-
 
     """production"""
     x_prod = fun.density_to_production(powerdensity=density_max.var, radius=turbine_radius, efficiencyfactor=turbine_efficiencyfactor,
@@ -120,6 +115,7 @@ pdf_parameter2 = screen.EnterField
 winning_projects = screen.EnterField
 
 
+#different probability density functions and number generation
 pdf_options = ["random", "beta", "gauss", "linear", "beta_lin", "gauss_lin"]
 pdf_functions = {"random": lambda: fun.ran_gen(lowerlimit=density_min.var, upperlimit=density_max.var, size=no_projects.var),
                 "beta": lambda: fun.beta_function(size=no_projects.var, parameteralfa=pdf_parameter1.var, parameterbeta=pdf_parameter2.var, lowerlimit=density_min.var, upperlimit=density_max.var),
@@ -130,19 +126,12 @@ pdf_functions = {"random": lambda: fun.ran_gen(lowerlimit=density_min.var, upper
 
                  }
 
-
-"""
---------------------------------------------------------
-"""
+# variables which sets difference scenarios of reference yield mechanism
 projects_compensation = {}
-
 compensation_scenarios = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5]
 keofnoref = compensation_scenarios.index(0.9)
 
-"""
---------------------------------------------------------
-"""
-
+#creates temporary storage
 def create_storage_temporary():
     global storage_temporary
     storage_temporary = {
@@ -176,6 +165,8 @@ def create_storage_temporary():
 
 create_storage_temporary()
 
+
+#creates pandas dataframe for longterm storage
 df_storage = pd.DataFrame()
 
 

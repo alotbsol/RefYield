@@ -1,9 +1,11 @@
 #Creates projects
+
 import settings
 import fun
 import pandas as pd
 
 
+# Generates projects based on EEG reference zield logic, i.e. from base LCOE adjusted bz reference yield model
 def gen_projects_germ():
     # Generates production
     productions = settings.pdf_functions[str(settings.pdf.picked)]()
@@ -57,10 +59,69 @@ def gen_projects_germ():
         settings.projects["comp_coef"].append(x)
 
 
+# Generates projects based on general logic of min and max LCOE,
+def gen_projects():
+    # Generates production
+    productions = settings.pdf_functions[str(settings.pdf.picked)]()
+    settings.projects["power_density"] = productions
 
 
+    # Generates LCOE based on production
+    settings.projects["production"] = []
+    # linear_gen(in_value, in_lower, in_upper, out_lower, out_upper) - intentionaly LCOE max min reversed
+    for i in settings.projects["power_density"]:
+        settings.projects["production"].append(fun.density_to_production(powerdensity=i, radius=settings.turbine_radius, efficiencyfactor=settings.turbine_efficiencyfactor , turbinecapacity=settings.turbinecapacity))
+
+    settings.projects["estimated_ws"] = []
+    for i in settings.projects["production"]:
+        settings.projects["estimated_ws"].append(
+            fun.density_to_wspeed(production=i, radius=settings.turbine_radius, efficiencyfactor=settings.turbine_efficiencyfactor,
+                                  turbinecapacity=settings.turbinecapacity, airdensity=settings.airdensity))
+
+    max_production = fun.density_to_production(powerdensity=settings.density_max.var, radius=settings.turbine_radius, efficiencyfactor=settings.turbine_efficiencyfactor , turbinecapacity=settings.turbinecapacity)
+    min_production = fun.density_to_production(powerdensity=settings.density_min.var, radius=settings.turbine_radius, efficiencyfactor=settings.turbine_efficiencyfactor,  turbinecapacity=settings.turbinecapacity)
+
+    settings.projects["site_qual"] = []
+
+    for i in range(0, settings.no_projects.var):
+        x = (settings.projects["production"][i] - min_production)/(max_production - min_production)
+        settings.projects["site_qual"].append(x)
+
+    settings.projects["LCOE_prod"] = []
+    for i in range(0, settings.no_projects.var):
+        settings.projects["LCOE_prod"].append(settings.LCOE_max.var - settings.projects["site_qual"][i] * (settings.LCOE_max.var - settings.LCOE_min.var))
 
 
+    settings.projects["site_qual_corr"] = []
+    for i in range(0, settings.no_projects.var):
+        x = settings.projects["LCOE_prod"][i] / settings.compensation_reference
+        settings.projects["site_qual_corr"].append(x)
+
+    # Generates other fact factors
+    others = fun.ran_int(0, 100, settings.no_projects.var)
+    settings.projects["other"] = []
+    for i in others:
+        x = fun.linear_gen(i, 0, 100, 1 - settings.others_change.var/100, 1 + settings.others_change.var/100)
+        settings.projects["other"].append(x)
+
+    # Calculates LCOEs
+    settings.projects["LCOE"] = []
+    for i in range(0, settings.no_projects.var):
+        x = settings.projects["LCOE_prod"][i] * settings.projects["other"][i]
+        settings.projects["LCOE"].append(x)
+
+    settings.projects["elprice"] = []
+    # Just adds electricity price
+    for i in range(0, settings.no_projects.var):
+        settings.projects["elprice"].append(settings.el_price.var)
+
+    settings.projects["comp_coef"] = []
+    for i in settings.projects["site_qual_corr"]:
+        x = max(min(i, settings.correction_max), settings.correction_min)
+        settings.projects["comp_coef"].append(x)
+
+
+# Based on generated projects calculates results with different degree of reference yield mechanism
 def compensation_calc():
     cat = ["correction", "extra_comp", "min_bid",  "possible_winner", "too_exp", "winner", "bid_through", "subsidy_min", "subsidy_max", "el_produced", "el_too_exp", "paid_min", "paid_max", "max_poss_bid"]
     for ii in settings.compensation_scenarios:
@@ -164,7 +225,7 @@ def compensation_calc():
             settings.projects_compensation[i]["paid_max"].append(w)
 
 
-
+# Stores all data of rounds/itterations for further use
 def store_data_temporary():
     global storage_temporary
 
@@ -199,7 +260,7 @@ def store_data_temporary():
         settings.storage_temporary["max_poss_bid"].append(sum(settings.projects_compensation[i]["max_poss_bid"])/len(settings.projects_compensation[i]["max_poss_bid"]))
 
 
-
+# Stores averages from store data temporary
 def store_data():
     storage_temporary_tobeappended = pd.DataFrame.from_dict(settings.storage_temporary, orient='index').transpose()
     storage_temporary_tobeappended = storage_temporary_tobeappended.groupby(["compensation"]).apply(lambda x: x.mean())
@@ -212,77 +273,13 @@ def store_data():
     settings.df_storage = settings.df_storage.reset_index(drop=True)
 
 
+# Just plays the code above for german approach
 def do_the_calc_germ():
     gen_projects_germ()
     compensation_calc()
     store_data_temporary()
 
-
-
-
-
-""" Normal non german calc below -----------------------------------  """
-def gen_projects():
-    # Generates production
-    productions = settings.pdf_functions[str(settings.pdf.picked)]()
-    settings.projects["power_density"] = productions
-
-
-    # Generates LCOE based on production
-    settings.projects["production"] = []
-    # linear_gen(in_value, in_lower, in_upper, out_lower, out_upper) - intentionaly LCOE max min reversed
-    for i in settings.projects["power_density"]:
-        settings.projects["production"].append(fun.density_to_production(powerdensity=i, radius=settings.turbine_radius, efficiencyfactor=settings.turbine_efficiencyfactor , turbinecapacity=settings.turbinecapacity))
-
-    settings.projects["estimated_ws"] = []
-    for i in settings.projects["production"]:
-        settings.projects["estimated_ws"].append(
-            fun.density_to_wspeed(production=i, radius=settings.turbine_radius, efficiencyfactor=settings.turbine_efficiencyfactor,
-                                  turbinecapacity=settings.turbinecapacity, airdensity=settings.airdensity))
-
-    max_production = fun.density_to_production(powerdensity=settings.density_max.var, radius=settings.turbine_radius, efficiencyfactor=settings.turbine_efficiencyfactor , turbinecapacity=settings.turbinecapacity)
-    min_production = fun.density_to_production(powerdensity=settings.density_min.var, radius=settings.turbine_radius, efficiencyfactor=settings.turbine_efficiencyfactor,  turbinecapacity=settings.turbinecapacity)
-
-    settings.projects["site_qual"] = []
-
-    for i in range(0, settings.no_projects.var):
-        x = (settings.projects["production"][i] - min_production)/(max_production - min_production)
-        settings.projects["site_qual"].append(x)
-
-    settings.projects["LCOE_prod"] = []
-    for i in range(0, settings.no_projects.var):
-        settings.projects["LCOE_prod"].append(settings.LCOE_max.var - settings.projects["site_qual"][i] * (settings.LCOE_max.var - settings.LCOE_min.var))
-
-
-    settings.projects["site_qual_corr"] = []
-    for i in range(0, settings.no_projects.var):
-        x = settings.projects["LCOE_prod"][i] / settings.compensation_reference
-        settings.projects["site_qual_corr"].append(x)
-
-    # Generates other fact factors
-    others = fun.ran_int(0, 100, settings.no_projects.var)
-    settings.projects["other"] = []
-    for i in others:
-        x = fun.linear_gen(i, 0, 100, 1 - settings.others_change.var/100, 1 + settings.others_change.var/100)
-        settings.projects["other"].append(x)
-
-    # Calculates LCOEs
-    settings.projects["LCOE"] = []
-    for i in range(0, settings.no_projects.var):
-        x = settings.projects["LCOE_prod"][i] * settings.projects["other"][i]
-        settings.projects["LCOE"].append(x)
-
-    settings.projects["elprice"] = []
-    # Just adds electricity price
-    for i in range(0, settings.no_projects.var):
-        settings.projects["elprice"].append(settings.el_price.var)
-
-    settings.projects["comp_coef"] = []
-    for i in settings.projects["site_qual_corr"]:
-        x = max(min(i, settings.correction_max), settings.correction_min)
-        settings.projects["comp_coef"].append(x)
-
-
+# Just plays the code above for general approach
 def do_the_calc():
     gen_projects()
     compensation_calc()
