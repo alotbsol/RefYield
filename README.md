@@ -9,7 +9,7 @@ Settings
 - variables and dictionaries for storages are all here
 
 Fun
-- here are some usefull functions which used all around the place
+- here are some usefull functions which are used all around the place
 
 gen
 - that is probably the most important, it is used to generate new projects based on probability density functions
