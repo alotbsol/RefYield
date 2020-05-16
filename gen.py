@@ -166,9 +166,6 @@ def compensation_calc():
             settings.projects_compensation[i]["too_exp"].append((1 - below_max[ii]) * settings.projects_compensation[i]["possible_winner"][ii])
 
 
-
-
-
     # if winners are equal then it selects winners randomly
     for i in settings.compensation_scenarios:
         if sum(settings.projects_compensation[i]["winner"]) > settings.winning_projects.var:
@@ -200,7 +197,6 @@ def compensation_calc():
 
             z = settings.projects["production"][ii] * settings.projects_compensation[i]["too_exp"][ii]
             settings.projects_compensation[i]["el_too_exp"].append(z)
-
 
 
     for ii in range(0, settings.no_projects.var):
@@ -258,6 +254,25 @@ def store_data_temporary():
         settings.storage_temporary["auction_bid_max_received"].append(max(settings.projects_compensation[i]["min_bid"]))
 
         settings.storage_temporary["max_poss_bid"].append(sum(settings.projects_compensation[i]["max_poss_bid"])/len(settings.projects_compensation[i]["max_poss_bid"]))
+
+        x = 0
+        for ii in range(0, len(settings.projects_compensation[i]["winner"])):
+            if settings.projects_compensation[0]["winner"][ii] == 1 and settings.projects_compensation[0]["winner"][ii] == settings.projects_compensation[i]["winner"][ii]:
+                x += 1
+            else:
+                pass
+
+        settings.storage_temporary["same_winners"].append(x / sum(settings.projects_compensation[i]["winner"]))
+
+
+        y = 0
+        highest_index_noref = settings.projects_compensation[0]["bid_through"].index(max(settings.projects_compensation[0]["bid_through"]))
+        highest_index_current = settings.projects_compensation[i]["bid_through"].index(max(settings.projects_compensation[i]["bid_through"]))
+        if highest_index_noref == highest_index_current:
+            y = 1
+        else:
+            pass
+        settings.storage_temporary["same_marginal_project"].append(y)
 
 
 # Stores averages from store data temporary

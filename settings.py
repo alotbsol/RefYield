@@ -159,9 +159,12 @@ def create_storage_temporary():
             "auction_bid_min_succ": [],
             "auction_bid_max_succ": [],
             "auction_bid_max_received": [],
-            "max_poss_bid": []
+            "max_poss_bid": [],
+            "same_winners": [],
+            "same_marginal_project": []
 
     }
+
 
 create_storage_temporary()
 
